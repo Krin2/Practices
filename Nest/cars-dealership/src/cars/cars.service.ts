@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class CarsService {
@@ -25,6 +25,14 @@ export class CarsService {
   }
 
   findOneById(id: number) {
-    return this.cars.find((car) => car.id === id);
+    const car = this.cars.find((car) => car.id === id);
+
+    // El exception filter capta una excepcion y devuelve un error estandarizado.
+    // A este error se le puede modificar el mensaje escribiendo el mensaje personalizado como argumento
+    if (!car) {
+      throw new NotFoundException(`Car with id: '${id}' not found`);
+    }
+
+    return car;
   }
 }
