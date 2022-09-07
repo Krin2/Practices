@@ -10,21 +10,21 @@ import { CreateCarDto, UpdateCarDto } from './dto';
 @Injectable()
 export class CarsService {
   private cars: Car[] = [
-    {
-      id: uuid(),
-      brand: 'toyota',
-      model: 'Corolle',
-    },
-    {
-      id: uuid(),
-      brand: 'Renault',
-      model: 'Sandero',
-    },
-    {
-      id: uuid(),
-      brand: 'Ford',
-      model: 'Ecosport',
-    },
+    // {
+    //   id: uuid(),
+    //   brand: 'toyota',
+    //   model: 'Corolle',
+    // },
+    // {
+    //   id: uuid(),
+    //   brand: 'Renault',
+    //   model: 'Sandero',
+    // },
+    // {
+    //   id: uuid(),
+    //   brand: 'Ford',
+    //   model: 'Ecosport',
+    // },
   ];
 
   findAll() {
@@ -80,5 +80,10 @@ export class CarsService {
   delete(id: string) {
     this.findOneById(id); // Esta funcion se usa para verificar que exista el elemento. si existe pasa y sino larga una excepcion y se termina la ejecucion
     this.cars = this.cars.filter((car) => car.id !== id); // Usamos un filter porque devuelve un array sin el elemento correspondiente al id pasado.
+  }
+
+  // Llena el array que estaba hardcodeado con los datos obtenidos de seed
+  fillCarsWithSeed(cars: Car[]) {
+    this.cars = cars;
   }
 }
