@@ -38,7 +38,7 @@ export class CarsController {
   // @UsePipes(ValidationPipe) // El ValidatePipe se puede usar como decorador de funcion para validar una sola funcion,
   // de clase para validar toda la clase y todas sus funciones, o se puede poner como decorador global para que valide todo el código.
   createCar(@Body() createCarDto: CreateCarDto) {
-    return createCarDto;
+    return this.carsService.create(createCarDto);
   }
 
   @Patch(':id')
