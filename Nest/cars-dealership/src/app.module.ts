@@ -7,8 +7,8 @@ import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [CarsModule, BrandsModule, SeedModule],
-  controllers: [CarsController],
-  providers: [CarsService],
+  controllers: [],
+  providers: [],
   exports: [],
 })
 export class AppModule {}
