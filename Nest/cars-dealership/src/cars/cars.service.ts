@@ -1,20 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Car } from './interfaces/cars.interfaces';
+import { v4 as uuid } from 'uuid'; // se usa para crear id unicos
 
 @Injectable()
 export class CarsService {
-  private cars = [
+  private cars: Car[] = [
     {
-      id: 1,
+      id: uuid(),
       brand: 'toyota',
       model: 'Corolle',
     },
     {
-      id: 2,
+      id: uuid(),
       brand: 'Renault',
       model: 'Sandero',
     },
     {
-      id: 3,
+      id: uuid(),
       brand: 'Ford',
       model: 'Ecosport',
     },
@@ -24,7 +26,7 @@ export class CarsService {
     return this.cars;
   }
 
-  findOneById(id: number) {
+  findOneById(id: string) {
     const car = this.cars.find((car) => car.id === id);
 
     // El exception filter capta una excepcion y devuelve un error estandarizado.
