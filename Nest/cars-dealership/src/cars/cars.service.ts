@@ -76,4 +76,9 @@ export class CarsService {
     });
     return carDB;
   }
+
+  delete(id: string) {
+    this.findOneById(id); // Esta funcion se usa para verificar que exista el elemento. si existe pasa y sino larga una excepcion y se termina la ejecucion
+    this.cars = this.cars.filter((car) => car.id !== id); // Usamos un filter porque devuelve un array sin el elemento correspondiente al id pasado.
+  }
 }
