@@ -1,20 +1,27 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { Car } from './interfaces/cars.interfaces';
+import { v4 as uuid } from 'uuid'; // se usa para crear id unicos
+import { CreateCarDto, UpdateCarDto } from './dto';
 
 @Injectable()
 export class CarsService {
-  private cars = [
+  private cars: Car[] = [
     {
-      id: 1,
+      id: uuid(),
       brand: 'toyota',
       model: 'Corolle',
     },
     {
-      id: 2,
+      id: uuid(),
       brand: 'Renault',
       model: 'Sandero',
     },
     {
-      id: 3,
+      id: uuid(),
       brand: 'Ford',
       model: 'Ecosport',
     },
@@ -24,7 +31,7 @@ export class CarsService {
     return this.cars;
   }
 
-  findOneById(id: number) {
+  findOneById(id: string) {
     const car = this.cars.find((car) => car.id === id);
 
     // El exception filter capta una excepcion y devuelve un error estandarizado.
@@ -34,5 +41,44 @@ export class CarsService {
     }
 
     return car;
+  }
+
+  create(createCarDto: CreateCarDto) {
+    const car = {
+      id: uuid(),
+      ...createCarDto,
+    };
+
+    this.cars.push(car);
+    return car;
+  }
+
+  update(id: string, updateCarDto: UpdateCarDto) {
+    if (updateCarDto.id && updateCarDto.id !== id) {
+      throw new BadRequestException(
+        `Car id in body is not valid for update (${updateCarDto.id})`,
+      );
+    }
+
+    let carDB = this.findOneById(id);
+
+    this.cars = this.cars.map((car) => {
+      if (car.id === id) {
+        // El codigo siguiente usa destructuracion (spread).
+        carDB = {
+          ...carDB, // Primero copia todas las propiedades de carDB en un nuevo objeto,
+          ...updateCarDto, // Luego sobreescribe las propiedades con los datos de updateCarDto
+          id, // Finalmente, sobreescribe el id
+        };
+        return carDB;
+      }
+      return car;
+    });
+    return carDB;
+  }
+
+  delete(id: string) {
+    this.findOneById(id); // Esta funcion se usa para verificar que exista el elemento. si existe pasa y sino larga una excepcion y se termina la ejecucion
+    this.cars = this.cars.filter((car) => car.id !== id); // Usamos un filter porque devuelve un array sin el elemento correspondiente al id pasado.
   }
 }
