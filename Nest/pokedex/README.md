@@ -23,3 +23,18 @@
 ## Stack usado
 * MongoDB
 * Nest
+
+# creacion de un pipe personalizado
+1. Creacion de un modulo comun para toda la aplicacion
+
+```
+nest g mo common
+```
+2. Creacion del pipe mediante nest-cli
+```
+nest g pi common/pipes/parseMongoId --no-spec
+```
+## NOTAS:
+- cuando creamos un pipe, no hace falta ponerle ...Pipe al nombre porque nest-cli se lo agrega solo
+- los pipes creados no se enlazan a ningun módulo
+

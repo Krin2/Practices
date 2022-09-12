@@ -3,13 +3,13 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  Param,
 } from '@nestjs/common';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { isValidObjectId, Model } from 'mongoose';
 import { Pokemon } from './entities/pokemon.entity';
 import { InjectModel } from '@nestjs/mongoose';
-import { isString } from 'class-validator';
 
 @Injectable()
 export class PokemonService {
@@ -24,20 +24,12 @@ export class PokemonService {
       const pokemon = await this.pokemonModel.create(createPokemonDto);
       return pokemon;
     } catch (error) {
-      if (error.code === 11000) {
-        throw new BadRequestException(
-          `Pokemon already exist on db ${JSON.stringify(error.keyValue)}`,
-        );
-      }
-      console.log(error.message);
-      throw new InternalServerErrorException(
-        `Can't create a pokemon - Check server logs`,
-      );
+      this.handleExceptions(error);
     }
   }
 
   findAll() {
-    return `This action returns all pokemon`;
+    return this.pokemonModel.find();
   }
 
   async findOne(term: string) {
@@ -59,11 +51,40 @@ export class PokemonService {
     return pokemon;
   }
 
-  update(id: number, updatePokemonDto: UpdatePokemonDto) {
-    return `This action updates a #${id} pokemon`;
+  async update(term: string, updatePokemonDto: UpdatePokemonDto) {
+    const pokemon = await this.findOne(term);
+    if (updatePokemonDto.name) {
+      updatePokemonDto.name = updatePokemonDto.name.toLowerCase();
+    }
+
+    try {
+      await pokemon.updateOne(updatePokemonDto); //   aca actualiza la db
+      return { ...pokemon.toJSON(), ...updatePokemonDto }; // aca se esparsen las propiedades de pokemon y luego se las sobreescribe con los valores de updatedPokemon
+    } catch (error) {
+      this.handleExceptions(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pokemon`;
+  async remove(id: string) {
+    // const pokemon = await this.findOne(id);
+    // pokemon.deleteOne();
+    const { deletedCount } = await this.pokemonModel.deleteOne({ _id: id });
+
+    if (deletedCount === 0) {
+      throw new BadRequestException(`Pokemon with id ${id} not found`);
+    }
+    return;
+  }
+
+  handleExceptions(error: any) {
+    if (error.code === 11000) {
+      throw new BadRequestException(
+        `Pokemon already exist on db ${JSON.stringify(error.keyValue)}`,
+      );
+    }
+    console.log(error.message);
+    throw new InternalServerErrorException(
+      `Can't create a pokemon - Check server logs`,
+    );
   }
 }
