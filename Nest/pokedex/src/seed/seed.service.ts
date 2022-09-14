@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import axios, { AxiosInstance } from 'axios';
 import { Model } from 'mongoose';
+import { AxiosAdapter } from 'src/common/adapters/axios.adapter';
 import { Pokemon } from 'src/pokemon/entities/pokemon.entity';
 import { PokeResponse } from './interfaces/poke-response.interface';
 
@@ -11,15 +11,16 @@ export class SeedService {
   constructor(
     @InjectModel(Pokemon.name)
     private readonly pokemonModel: Model<Pokemon>,
+
+    private readonly http: AxiosAdapter,
   ) {}
-  private readonly axios: AxiosInstance = axios;
 
   async executeSeed() {
     // Borro todos los valores antes de cargar le nuevo los mismos
     await this.pokemonModel.deleteMany({}); // delete * from pokemons
 
     // Toma los datos de la url de pokemonapi con el filtro de 650 pokemons
-    const { data } = await this.axios.get<PokeResponse>(
+    const data = await this.http.get<PokeResponse>(
       'https://pokeapi.co/api/v2/pokemon?limit=650',
     );
     const pokemons: { name: string; no: number }[] = [];
