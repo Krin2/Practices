@@ -22,6 +22,12 @@ export class PokemonService {
 
     private readonly configService: ConfigService,
   ) {
+    // En este punto, los valores por defecto los pusimos distintos para ver cual de ellos esta tomando por defecto.
+    // en el .env esta en 5 pero lo estamos comentando
+    // en app.config está en 7
+    // en joi.validation esta en 8
+    // La aplicacion toma este último valor, ya que el joi.validation se ejecuta antes y otorga al valor de .env el valor por defecto de 8.
+    // luego, en app.config, el valor process.env.DEFAULT_LIMIT, ya viene con el valor 8 por lo que toma este valor en vez de usar el seteado aca por defecto
     this.defaultLimit = configService.get<number>('defaultLimit'); // a esta variable privada, se le asigna el valor del configService en el constructor para que pueda ser usada en toda la clase
   }
 
