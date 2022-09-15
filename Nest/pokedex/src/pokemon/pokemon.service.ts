@@ -4,19 +4,26 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { ConfigService } from '@nestjs/config';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { isValidObjectId, Model } from 'mongoose';
 import { Pokemon } from './entities/pokemon.entity';
-import { InjectModel } from '@nestjs/mongoose';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class PokemonService {
+  // Se crea una variable privada para incorporar los datos del config
+  private defaultLimit: number;
   constructor(
     @InjectModel(Pokemon.name) // Se usa este inyectable porque pokemonModel no es un provider. Pokemon.name es el nombre del modelo que va a buscar en mongo
     private readonly pokemonModel: Model<Pokemon>, // se define a pokemonModel como un modelo importado de mongo cuyos datos son de tipo Pokemon
-  ) {}
+
+    private readonly configService: ConfigService,
+  ) {
+    this.defaultLimit = configService.get<number>('defaultLimit'); // a esta variable privada, se le asigna el valor del configService en el constructor para que pueda ser usada en toda la clase
+  }
 
   async create(createPokemonDto: CreatePokemonDto) {
     try {
@@ -29,7 +36,7 @@ export class PokemonService {
   }
 
   findAll(paginationDto: PaginationDto) {
-    const { limit = 10, offset = 0 } = paginationDto; // al destructurarlo le doy valores por defecto
+    const { limit = this.defaultLimit, offset = 0 } = paginationDto; // al destructurarlo le doy valores por defecto
 
     return this.pokemonModel
       .find()

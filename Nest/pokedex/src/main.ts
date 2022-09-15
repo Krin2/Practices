@@ -17,6 +17,6 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT); // aca esta escuchando en el puerto configurado en el .env no usa la configuracion del app.config
 }
 bootstrap();

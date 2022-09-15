@@ -25,6 +25,16 @@
     http://localhost:3000/api/v2/seed
   ```
 
+6. Ejecutar la aplicacion
+   1. En modo desarrollo
+ ```
+    yarn start:dev
+  ```
+   2. en modo produccion
+  ```
+    yarn start
+  ```
+
 ## Stack usado
 * MongoDB
 * Nest
