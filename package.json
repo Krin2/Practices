@@ -1,0 +1,15 @@
+{
+  "name": "Practices",
+  "version": "0.0.1",
+  "description": "Just practices",
+  "author": "Marcos Frigerio",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "prebuild": "rimraf Nest/pokedex/dist",
+    "build": "nest Nest/pokedex/build",
+    "start": "node Nest/pokedex/dist/main"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
